@@ -5,6 +5,10 @@ class HomeScreen extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
+
+    Get.put(() => DownloadsController());
+
+
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,

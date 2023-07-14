@@ -3,18 +3,12 @@
 import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
-import 'dart:convert';
 
 import 'package:share_plus/share_plus.dart';
 import 'package:tikidown/API/dio_client.dart';
 import 'package:tikidown/API/directory_client.dart';
 import 'package:tikidown/API/videos_class.dart';
 import 'package:tikidown/CORE/core.dart';
-import 'package:tikidown/MODELS/videos_model.dart';
-
-
-import 'package:http/http.dart' as http;
-import 'dart:math' as math;
 
 class SwipeController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -62,6 +56,10 @@ class SwipeController extends GetxController
 
 // Home screen Controllers
 
+  RxInt totalItems = 0.obs;
+
+  final boxDatas = GetStorage();
+  RxList storageList = [].obs;
   final RxBool loading = false.obs;
   RxDouble progress = 0.0.obs;
   bool isDownloadLink = false;
@@ -70,13 +68,20 @@ class SwipeController extends GetxController
   final DirectoryClient _directoryClient = DirectoryClient();
   dynamic videoData = VideoInfo(url: "");
 
-  RxList downList = RxList();
-  RxList filesList = RxList();
-  late VideoModel fileModel;
-  var totalItems = 0.obs;
+  readStorage() async {
+    var boxVideos = await box.read("videos");
+    storageList.value = boxVideos ?? [];
+
+    // log(storageList.toString());
+    log(storageList.length.toString());
+    log("--- readStorage()");
+  }
 
   fetchDatas(String link) async {
     var linkTest = link.contains(RegExp('https://'));
+
+    print("Test link: $linkTest");
+
     if (linkTest) {
       videoData = await _client.infoVideo(url: link);
 
@@ -104,12 +109,20 @@ class SwipeController extends GetxController
       // print(videoData?.avatar);
 
       if (videoData?.video != null && videoData?.video != "") {
+        // final sigma = "dima_inc26";
+
         isDownloadLink = true;
         var name = videoData?.username;
+        var username = videoData?.name;
         var title = videoData?.title;
 
         String splitTilte = title.split(" ").join("-");
+
         if (splitTilte.length > 30) splitTilte = splitTilte.substring(0, 29);
+
+        // fullInfos = "${name}-${username}-$splitTilte-$sigma";
+
+        // print("Full Infos: $fullInfos");
 
         Get.bottomSheet(
           Container(
@@ -277,58 +290,32 @@ class SwipeController extends GetxController
     progress.value = await _directoryClient.checkDirectory(
         link: link, fileName: currentDate);
 
-    // Sauver img dans bdd;
-    File coverFile = await urlImageToFile(currentDate, videoData?.cover);
-
-    // Sauver dans db
-    fileModel = VideoModel(
-      id: UniqueKey().toString(),
-      title: videoData?.title,
-      name: videoData?.username,
-      username: videoData?.name,
-      type: mode == "natural" || mode == "watermark" ? "mp4" : "mp3",
-      avatar: videoData?.avatar,
-      date: currentDate,
-      cover: coverFile.path,
-    );
-
-    downList.value.add(fileModel);
-
-    final dataSave = jsonEncode(downList.value);
-
-    box.write("files", dataSave);
-
-    log(box.read("files").toString());
-
-    filesList.value = [];
-    listFiles();
-
     if (progress.value == 1) loading.value = false;
+
+    saveDatas(mode, currentDate);
+    listFiles();
+    totalItems.value = fileList.length;
   }
 
-  Future<File> urlImageToFile(date, url) async {
-    Directory tempDir = await getTemporaryDirectory();
-    String tempPath = tempDir.path;
-    log('$tempPath$date.jpg');
-    File file = File('$tempPath$date.gif');
+  saveDatas(String mode, date) async {
+    readStorage();
+    storageList.add({
+      "id": UniqueKey().toString(),
+      "title": videoData?.title,
+      "type": mode == "natural" || mode == "watermark" ? "mp4" : "mp3",
+      "date": date,
+      "name": videoData?.name,
+      "username": videoData?.username,
+      "avatar": videoData?.avatar,
+      "cover": mode == "natural" || mode == "watermark"
+          ? videoData?.cover
+          : videoData?.music_cover,
+    });
+    log(storageList.toString());
 
-    http.Response response = await http.get(Uri.parse(url));
+    box.write("videos", storageList);
 
-    await file.writeAsBytes(response.bodyBytes);
-    return file;
-  }
-
-  readStorage() async {
-    late List<dynamic> datas;
-    if (box.hasData("files")) {
-      datas = jsonDecode(box.read("files"));
-      log("${datas.length}");
-    } else {
-      datas = [];
-      log(" ---- AUcune donnee");
-    }
-
-    downList.value = datas;
+    await box.save();
   }
 
   deleteStorage() async {
@@ -344,6 +331,12 @@ class SwipeController extends GetxController
   RxBool goodDeleted = false.obs;
   RxInt selectedPage = 0.obs;
   RxInt xselectedPage = 0.obs;
+  RxList fileList = <Map<String, dynamic>>[].obs;
+
+  eraseStorage() async {
+    await box.remove("videos");
+    log("--- eraseStorage()");
+  }
 
   changePage(pageSelected) {
     downPageController.animateToPage(pageSelected,
@@ -356,6 +349,7 @@ class SwipeController extends GetxController
 
   listFiles() async {
     await readStorage();
+
     Directory directory = Directory(path);
     late List<FileSystemEntity> files;
 
@@ -373,35 +367,48 @@ class SwipeController extends GetxController
         String nameWithType = file.path.split("/").last;
         String name = nameWithType.split(".").first;
         String type = nameWithType.split(".").last;
-
-        downList.forEach((downloadFile) {
-          if (downloadFile["date"] == name) {
-            filesList.value.add(downloadFile);
-          }
-        });
-
         // log(" ${name} ------ ${type} ");
+
+        for (var storageData in storageList) {
+          if (storageData["date"] == name) {
+            storageData.addAll({"isSelected": false.obs, "path": file.path});
+
+            // print("---- $storageData");
+            fileList.add(storageData);
+          }
+        }
       }
     }
+    totalItems.value = fileList.length;
 
-    totalItems.value = filesList.value.length;
-
-    log("${filesList.value[0]["cover"]}");
+    if (fileList.isNotEmpty) {
+      log("---- : ${fileList.last} \n");
+    }
   }
 
-  // var toRemove = [];
+  var toRemove = [];
 
-  // deleteFile(List files) async {
-  //   filesList.forEach((element) {
-  //     if (element["isSelected"].value == true) {
-  //       // log(element.toString());
-  //       toRemove.add(element);
-  //     }
-  //   });
+  deleteFile(List files) async {
+    fileList.forEach((element) {
+      if (element["isSelected"].value == true) {
+        // log(element.toString());
+        toRemove.add(element);
+      }
+    });
 
-  //   filesList.removeWhere((element) => toRemove.contains(element));
-  //   totalItems.value = filesList.length;
-  // }
+    fileList.removeWhere((element) => toRemove.contains(element));
+    totalItems.value = fileList.length;
+
+    // for (var file in files) {
+    //   if (file["isSelected"] == true) {
+
+    //     File deleteFile = File(file["path"]);
+    //     deleteFile.deleteSync();
+    //     fileList.remove(file);
+    //     log(fileList.toString());
+    //   }
+    // }
+  }
 
   Future<bool> shareFiles({required RxList filesToShare}) async {
     List<XFile>? shares = [];

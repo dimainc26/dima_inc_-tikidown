@@ -62,7 +62,7 @@ class DownloadsController extends GetxController
 
         for (var storageData in storageList) {
           if (storageData["date"] == name) {
-            storageData.addAll({"isSelected":  false.obs, "path": file.path });
+            storageData.addAll({"isSelected": false.obs, "path": file.path});
 
             print("---- $storageData");
             fileList.add(storageData);
@@ -77,12 +77,28 @@ class DownloadsController extends GetxController
     }
   }
 
-  deleteFile(List files)async {
-    for (var file in files) {
-      if (file["isSelected"] == true) {
-        log(file.toString());
+  var toRemove = [];
+
+  deleteFile(List files) async {
+    fileList.forEach((element) {
+      if (element["isSelected"].value == true) {
+        // log(element.toString());
+        toRemove.add(element);
       }
-    }
+    });
+
+    fileList.removeWhere((element) => toRemove.contains(element));
+    totalItems.value = fileList.length;
+
+    // for (var file in files) {
+    //   if (file["isSelected"] == true) {
+
+    //     File deleteFile = File(file["path"]);
+    //     deleteFile.deleteSync();
+    //     fileList.remove(file);
+    //     log(fileList.toString());
+    //   }
+    // }
   }
 
   Future<bool> shareFiles({required RxList filesToShare}) async {

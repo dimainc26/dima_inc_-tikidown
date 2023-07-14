@@ -32,7 +32,8 @@ class DownloadsScreen extends GetView<DownloadsController> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           InkWell(
-                            onTap: () => controller.deleteFile(controller.fileList),
+                            onTap: () =>
+                                controller.deleteFile(controller.fileList),
                             child: SvgPicture.asset(
                               delete_icon,
                               width: 38,
@@ -117,85 +118,106 @@ class DownloadsScreen extends GetView<DownloadsController> {
                       },
                       itemBuilder: (BuildContext context, int pageIndex) {
                         return pageIndex == 0
-                            ? GridView.builder(
-                                gridDelegate:
-                                    const SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 2),
-                                shrinkWrap: true,
-                                itemCount: controller.totalItems.value,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return GestureDetector(
-                                    onTap: () => controller.next(
-                                        videoInfos: controller.fileList[index]),
-                                    onLongPress: () {
-                                      if (controller.fileList[index]
-                                              ["isSelected"].value !=
-                                          null) {
-                                        controller.fileList[index]["isSelected"].value
-                                                 =
-                                            !controller
-                                                .fileList[index]["isSelected"].value
-                                                ;
-                                        print(controller
-                                            .fileList[index]["isSelected"].value
-                                            );
-                                      } else {}
-                                      ;
-                                    },
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          margin: const EdgeInsets.symmetric(
-                                              vertical: 4, horizontal: 6),
-                                          width: Get.width,
-                                          height: 130,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                            image: DecorationImage(
-                                              image: NetworkImage(controller
-                                                  .fileList[index]["cover"]),
-                                              fit: BoxFit.fitWidth,
-                                              filterQuality: FilterQuality.high,
-                                              colorFilter: controller
-                                                              .fileList[index]
-                                                          ["isSelected"] !=
-                                                      null
-                                                  ? controller.fileList[index]
-                                                          ["isSelected"].value
-                                                      ? const ColorFilter.mode(
-                                                          Colors.red,
-                                                          BlendMode.color)
-                                                      : const ColorFilter.mode(
-                                                          Colors.transparent,
-                                                          BlendMode.color)
-                                                  : const ColorFilter.mode(
-                                                      Colors.transparent,
-                                                      BlendMode.color),
+                            ? Obx(
+                                () => GridView.builder(
+                                    gridDelegate:
+                                        const SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 2),
+                                    shrinkWrap: true,
+                                    itemCount: controller.totalItems.value,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return GestureDetector(
+                                        onTap: () => controller.next(
+                                            videoInfos:
+                                                controller.fileList[index]),
+                                        onLongPress: () {
+                                          if (controller
+                                                  .fileList[index]["isSelected"]
+                                                  .value !=
+                                              null) {
+                                            controller
+                                                    .fileList[index]["isSelected"]
+                                                    .value =
+                                                !controller
+                                                    .fileList[index]
+                                                        ["isSelected"]
+                                                    .value;
+                                            print(controller
+                                                .fileList[index]["isSelected"]
+                                                .value);
+                                          } else {}
+                                          ;
+                                        },
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Obx(
+                                              ()=> Container(
+                                                margin:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 4,
+                                                        horizontal: 6),
+                                                width: Get.width,
+                                                height: 130,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                  image: DecorationImage(
+                                                    image: NetworkImage(
+                                                        controller.fileList[index]
+                                                            ["cover"]),
+                                                    fit: BoxFit.fitWidth,
+                                                    filterQuality:
+                                                        FilterQuality.high,
+                                                    colorFilter: controller
+                                                                        .fileList[
+                                                                    index]
+                                                                ["isSelected"].value !=
+                                                            null
+                                                        ? controller
+                                                                .fileList[index]
+                                                                    ["isSelected"].value
+                                                            ? const ColorFilter
+                                                                    .mode(
+                                                                Colors.red,
+                                                                BlendMode.color)
+                                                            : const ColorFilter
+                                                                    .mode(
+                                                                Colors
+                                                                    .transparent,
+                                                                BlendMode.color)
+                                                        : const ColorFilter.mode(
+                                                            Colors.transparent,
+                                                            BlendMode.color),
+                                                  ),
+                                                ),
+                                              ),
                                             ),
-                                          ),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 20),
+                                              child: SingleChildScrollView(
+                                                scrollDirection:
+                                                    Axis.horizontal,
+                                                child: Text(controller
+                                                    .fileList[index]["title"]),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 20),
+                                              child: Text(
+                                                  "@${controller.fileList[index]["name"]}"),
+                                            ),
+                                          ],
                                         ),
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 20),
-                                          child: SingleChildScrollView(
-                                            scrollDirection: Axis.horizontal,
-                                            child: Text(controller
-                                                .fileList[index]["title"]),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 20),
-                                          child: Text(
-                                              "@${controller.fileList[index]["name"]}"),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                })
+                                      );
+                                    }),
+                              )
                             : Text(pageIndex.toString());
                       }),
                 ),

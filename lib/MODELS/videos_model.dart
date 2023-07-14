@@ -5,7 +5,7 @@ part 'videos_model.g.dart';
 
 @JsonSerializable()
 class VideoModel {
-  String? id;
+  String id;
   String? title;
   String? name;
   String? username;
@@ -15,14 +15,14 @@ class VideoModel {
   String? date;
 
   VideoModel(
-      {required id,
-      required title,
-      required name,
-      required username,
-      required type,
-      required avatar,
-      required date,
-      required cover});
+      {required this.id,
+      required this.title,
+      required this.name,
+      required this.username,
+      required this.type,
+      required this.avatar,
+      required this.date,
+      required this.cover});
 
   factory VideoModel.fromJson(Map<String, dynamic> json) =>
       _$VideoModelFromJson(json);

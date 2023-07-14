@@ -10,17 +10,19 @@ import 'package:tikidown/CORE/core.dart';
 import 'package:tikidown/MODELS/videos_model.dart';
 
 class HomeController extends GetxController {
+  RxInt totalItems = 0.obs;
+
   final boxDatas = GetStorage();
   List storageList = [];
 
-    readStorage() async {
+  readStorage() async {
     var x = await box.read("videos");
 
-    storageList = x != null ? x : [] ;
+    storageList = x != null ? x : [];
 
     log("ici :  --- $storageList");
 
-    log("total: "+ storageList.length.toString());
+    log("total: " + storageList.length.toString());
   }
 
   final pageController = PageController;
@@ -250,41 +252,41 @@ class HomeController extends GetxController {
       link = videoData.music;
     }
 
-      String currentDate = actualDate();
-
+    String currentDate = actualDate();
 
     progress.value = await _directoryClient.checkDirectory(
-
         link: link, fileName: "${currentDate}");
 
     if (progress.value == 1) loading.value = false;
 
     saveDatas(mode, currentDate);
+
+    totalItems = Get.find<DownloadsController>().totalItems + 1;
   }
 
   saveDatas(String mode, date) async {
-
     storageList.add({
       "id": UniqueKey().toString(),
       "title": videoData?.title,
-      "type":  mode == "natural" || mode == "watermark" ? "mp4" : "mp3",
+      "type": mode == "natural" || mode == "watermark" ? "mp4" : "mp3",
       "date": date,
       "name": videoData?.name,
       "username": videoData?.username,
       "avatar": videoData?.avatar,
-      "cover":  mode == "natural" || mode == "watermark" ? videoData?.cover : videoData?.music_cover,
-
+      "cover": mode == "natural" || mode == "watermark"
+          ? videoData?.cover
+          : videoData?.music_cover,
     });
     log(storageList.toString());
 
     box.write("videos", storageList);
 
     await box.save();
-
   }
 
   deleteStorage() async {
     box.erase();
+    box.save();
   }
 
   @override

@@ -60,6 +60,12 @@ class DioClient {
     return retrievedVideo;
   }
 
+  saveImage(imgUrl)async {
+    final response = await _dio.get(imgUrl);
+
+    return response;
+  }
+
   Future<double> downloadVideo({required String link, required String filePath}) async {
     var progress = 0.0;
     try {
