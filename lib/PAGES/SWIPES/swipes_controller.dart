@@ -12,7 +12,6 @@ import 'package:tikidown/API/videos_class.dart';
 import 'package:tikidown/CORE/core.dart';
 import 'package:tikidown/MODELS/videos_model.dart';
 
-
 import 'package:http/http.dart' as http;
 import 'dart:math' as math;
 
@@ -281,20 +280,27 @@ class SwipeController extends GetxController
     File coverFile = await urlImageToFile(currentDate, videoData?.cover);
 
     // Sauver dans db
-    fileModel = VideoModel(
-      id: UniqueKey().toString(),
-      title: videoData?.title,
-      name: videoData?.username,
-      username: videoData?.name,
-      type: mode == "natural" || mode == "watermark" ? "mp4" : "mp3",
-      avatar: videoData?.avatar,
-      date: currentDate,
-      cover: coverFile.path,
-    );
+    Map<String, dynamic> fileModel = ({
+      "id": UniqueKey().toString(),
+      "title": videoData?.title,
+      "name": videoData?.username,
+      "username": videoData?.name,
+      "type": mode == "natural" || mode == "watermark" ? "mp4" : "mp3",
+      "avatar": videoData?.avatar,
+      "date": currentDate,
+      "cover": coverFile.path,
+    });
 
-    downList.value.add(fileModel);
+    for (Map<String, dynamic> l in downList) {
+      l.remove("isSelected");
+      l.remove("path");
+    }
 
-    final dataSave = jsonEncode(downList.value);
+
+    downList.add(fileModel);
+      log("||| - $downList");
+
+    final dataSave = jsonEncode(downList);
 
     box.write("files", dataSave);
 
@@ -309,7 +315,7 @@ class SwipeController extends GetxController
   Future<File> urlImageToFile(date, url) async {
     Directory tempDir = await getTemporaryDirectory();
     String tempPath = tempDir.path;
-    log('$tempPath$date.jpg');
+    // log('$tempPath$date.gif');
     File file = File('$tempPath$date.gif');
 
     http.Response response = await http.get(Uri.parse(url));
@@ -323,6 +329,7 @@ class SwipeController extends GetxController
     if (box.hasData("files")) {
       datas = jsonDecode(box.read("files"));
       log("${datas.length}");
+      // log("${datas}");
     } else {
       datas = [];
       log(" ---- AUcune donnee");
@@ -376,7 +383,16 @@ class SwipeController extends GetxController
 
         downList.forEach((downloadFile) {
           if (downloadFile["date"] == name) {
-            filesList.value.add(downloadFile);
+            Map<String, dynamic> x = downloadFile;
+
+            x.addAll({
+              "isSelected": false.obs,
+              "path": file.path,
+            });
+
+            log(x.toString());
+
+            filesList.value.add(x);
           }
         });
 
@@ -386,32 +402,50 @@ class SwipeController extends GetxController
 
     totalItems.value = filesList.value.length;
 
-    log("${filesList.value[0]["cover"]}");
+    log("${filesList.value.length}");
   }
 
-  // var toRemove = [];
+  var toRemove = [];
 
-  // deleteFile(List files) async {
-  //   filesList.forEach((element) {
-  //     if (element["isSelected"].value == true) {
-  //       // log(element.toString());
-  //       toRemove.add(element);
-  //     }
-  //   });
+  deleteFile(List files) async {
+    filesList.forEach((element) {
+      if (element["isSelected"].value == true) {
+        // log(element.toString());
+        File delFile = File(element["path"]);
+        log(delFile.path);
+        delFile.deleteSync();
+        toRemove.add(element);
+      }
+    });
 
-  //   filesList.removeWhere((element) => toRemove.contains(element));
-  //   totalItems.value = filesList.length;
-  // }
+    filesList.removeWhere((element) => toRemove.contains(element));
 
-  Future<bool> shareFiles({required RxList filesToShare}) async {
+    // Remove in getstorage implementation  before remove addAll({x}) contents
+
+    // final dataSave = jsonEncode(filesList.value);
+    // box.write("files", dataSave);
+
+    totalItems.value = filesList.length;
+  }
+
+  Future<bool> shareFiles({required List filesToShare}) async {
     List<XFile>? shares = [];
     RxBool goodShare = false.obs;
 
     for (var shareElement in filesToShare) {
-      if (shareElement["isSelected"] == true) {
-        shares.add(XFile(shareElement["path"]));
-        goodShare.value = false;
+      for (var share in shareElement) {
+        log("${share}");
+
+        if (share["isSelected"] == true.obs) {
+          shares.add(XFile(share["path"]));
+          goodShare.value = false;
+        }
       }
+
+      // if (shareElement["isSelected"] == true.obs) {
+      //   shares.add(XFile(shareElement["path"]));
+      //   goodShare.value = false;
+      // }
     }
     goodShare.value = true;
     if (shares.isNotEmpty) {
