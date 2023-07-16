@@ -4,11 +4,13 @@ class NavigateButton extends StatelessWidget {
   const NavigateButton({
     required this.text,
     required this.color,
+    required this.onTap,
     super.key,
   });
 
   final String text;
   final Color color;
+  final Function() onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +20,7 @@ class NavigateButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(25),
       ),
       child: MaterialButton(
-        onPressed: () {},
+        onPressed: onTap,
         child: Text("-- ${text} --"),
       ),
     );

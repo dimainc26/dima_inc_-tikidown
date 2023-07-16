@@ -12,3 +12,7 @@ const String thirdOnboard = "Voir en temps réel le cheminement de vos colis à 
 const String titleOnboard1 = "La Demande & l’Emplacement Concerné";
 const String titleOnboard2 = "Tous ce que vous voulez, En Tout Temps, En Tous Lieux";
 const String titleOnboard3 = "Suivi en direct du cheminement de vos expéditions";
+
+
+
+const String delete_text = "Supprimer les fichiers selectionnees ? ";

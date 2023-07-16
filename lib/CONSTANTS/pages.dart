@@ -20,12 +20,12 @@ class AppPages {
         name: '/',
         page: () {
           if (box.hasData('account')) {
-            return const HomeScreen();
+            return const SwipeScreen();
           } else {
             return const SplashScreen();
           }
         },
-        binding: box.hasData('account') ? HomeBinding() : SplashBinding()),
+        binding: box.hasData('account') ? SwipeBinding() : SplashBinding()),
     GetPage(
         name: '/onboard',
         page: () => const OnBoardingScreen(),
@@ -35,7 +35,7 @@ class AppPages {
         page: () => const SwipeScreen(),
         binding: SwipeBinding()),
     GetPage(
-        name: '/home', page: () => const HomeScreen(), binding: HomeBinding()),
+        name: '/home', page: () => const SwipeScreen(), binding: SwipeBinding()),
     GetPage(
         name: '/player',
         page: () => const PlayerScreen(),

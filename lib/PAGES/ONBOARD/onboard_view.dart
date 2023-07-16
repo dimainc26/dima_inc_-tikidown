@@ -56,8 +56,16 @@ class OnBoardingScreen extends GetView<OnBoardController> {
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    NavigateButton(text: "Skip", color: firstColor),
-                    NavigateButton(text: "Next", color: secondColor),
+                    NavigateButton(
+                        onTap: () => controller.next(),
+                        text: "Skip",
+                        color: firstColor),
+                    NavigateButton(
+                        onTap: () => controller.controller.animateToPage(2,
+                            duration: controller.duration,
+                            curve: Curves.easeIn),
+                        text: "Next",
+                        color: secondColor),
                   ]),
             ),
           ),
@@ -66,4 +74,3 @@ class OnBoardingScreen extends GetView<OnBoardController> {
     );
   }
 }
-
