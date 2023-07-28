@@ -32,3 +32,10 @@ const topMenu = TextStyle(
   fontSize: 22,
   fontWeight: FontWeight.bold
 );
+
+const largeText = TextStyle(
+  color: firstColor,
+  decoration: TextDecoration.underline,
+  fontSize: 28,
+  fontWeight: FontWeight.bold
+);

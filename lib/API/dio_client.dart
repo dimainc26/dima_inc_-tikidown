@@ -1,11 +1,13 @@
-import 'dart:io';
+import 'dart:developer';
 
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' as d;
 import 'package:flutter/foundation.dart';
+import 'package:get/get.dart';
 import 'package:tikidown/API/videos_class.dart';
+import 'package:tikidown/CORE/core.dart';
 
 class DioClient {
-  final Dio _dio = Dio();
+  final d.Dio _dio = d.Dio();
 
   final _baseUrl = 'https://www.tikwm.com';
 
@@ -16,7 +18,7 @@ class DioClient {
     VideoInfo? retrievedVideo;
 
     try {
-      Response response = await _dio.post(
+      d.Response response = await _dio.post(
           queryParameters: {
             "sec-ch-ua":
                 'Chromium";v="104", " Not A;Brand";v="99", "Google Chrome";v="104"',
@@ -60,27 +62,43 @@ class DioClient {
     return retrievedVideo;
   }
 
-  saveImage(imgUrl)async {
+  saveImage(imgUrl) async {
     final response = await _dio.get(imgUrl);
 
     return response;
   }
 
-  Future<double> downloadVideo({required String link, required String filePath}) async {
-    var progress = 0.0;
+  Future<(RxBool, RxDouble)> downloadVideo(
+      {required String link, required String filePath}) async {
+    var progress = 0.0.obs;
     try {
       await _dio.download(link, filePath,
           onReceiveProgress: (download, totalSize) {
-            progress = download / totalSize;
+        progress.value = download / totalSize;
+      });
+      Get.bottomSheet(Container(
+        width: Get.width,
+        height: 120,
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(12),
+            topRight: Radius.circular(12),
+          ),
+          color: thirdColor,
+        ),
+        child: Center(
+            child: LargeButton(
+                onTap: () {},
+                color: firstColor,
+                text: "Telechargement Terminer")),
+      ));
 
-          });
-
-          print("telechargement terminer");
-          return progress;
+      log("telechargement terminer");
+      return (true.obs, progress);
     } catch (e) {
-      print(e);
+      log("*************** $e");
     }
 
-    return 0.0;
+    return (false.obs, progress);
   }
 }

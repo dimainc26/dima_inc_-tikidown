@@ -15,6 +15,8 @@ const String share_icon = "${img}share.svg";
 const String delete_icon = "${img}delete.svg";
 const String download_icon = "${img}download.svg";
 const String search_icon = "${img}search.svg";
+const String play_icon = "${img}play.svg";
+const String pause_icon = "${img}pause.svg";
 
 
 

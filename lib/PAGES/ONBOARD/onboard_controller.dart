@@ -4,13 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class OnBoardController extends GetxController {
+
+  Duration duration = Duration(milliseconds: 500);
   
   final pageController = PageController;
 
    final controller = PageController(initialPage: 0);
 
 
-  next() => Get.offNamed('signin');
+  next() => Get.offNamed('swipes');
 
 
   @override

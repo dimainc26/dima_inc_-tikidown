@@ -23,16 +23,6 @@ export 'SWIPES/swipes_view.dart';
 export 'SWIPES/swipes_binding.dart';
 export 'SWIPES/swipes_controller.dart';
 
-// Home
-export 'HOME/home_view.dart';
-export 'HOME/home_binding.dart';
-export 'HOME/home_controller.dart';
-
-// Downloads
-export 'DOWNLOADS/downloads_view.dart';
-export 'DOWNLOADS/downloads_binding.dart';
-export 'DOWNLOADS/downloads_controller.dart';
-
 // Downloads
 export 'PLAYER/player_view.dart';
 export 'PLAYER/player_binding.dart';
