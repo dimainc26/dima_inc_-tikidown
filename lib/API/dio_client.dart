@@ -1,8 +1,6 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart' as d;
-import 'package:flutter/foundation.dart';
-import 'package:get/get.dart';
 import 'package:tikidown/API/videos_class.dart';
 import 'package:tikidown/CORE/core.dart';
 
@@ -76,6 +74,7 @@ class DioClient {
           onReceiveProgress: (download, totalSize) {
         progress.value = download / totalSize;
       });
+
       Get.bottomSheet(Container(
         width: Get.width,
         height: 120,
@@ -88,12 +87,12 @@ class DioClient {
         ),
         child: Center(
             child: LargeButton(
-                onTap: () {},
+                onTap: () => Get.back(),
                 color: firstColor,
                 text: "Telechargement Terminer")),
       ));
 
-      log("telechargement terminer");
+      log("--- telechargement terminer");
       return (true.obs, progress);
     } catch (e) {
       log("*************** $e");

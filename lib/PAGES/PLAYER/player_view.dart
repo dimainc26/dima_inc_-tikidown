@@ -4,7 +4,6 @@ import 'package:share_plus/share_plus.dart';
 
 class _VideoProgressSlider extends StatelessWidget {
   const _VideoProgressSlider({
-    super.key,
     required this.position,
     required this.duration,
     required this.swatch,
@@ -72,7 +71,7 @@ class PlayerScreen extends GetView<PlayerController> {
                     !controller.pausedContent.value;
               },
               onLongPress: () {},
-              child: Container(
+              child: SizedBox(
                 width: (Get.height / 16) * 9,
                 height: Get.height,
                 child: AspectRatio(
@@ -88,10 +87,15 @@ class PlayerScreen extends GetView<PlayerController> {
                 top: controller.pausedContent.value == true ? 100 : -100,
                 child: Row(
                   children: [
-                    TextButton(
-                        onPressed: () {},
-                        child:
-                            Container(color: Colors.red, child: Text("share"))),
+                    Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                              image: NetworkImage(controller.datas["avatar"]))),
+                    ),
+                    Text(" @"+controller.datas["username"], style: topMenu,)
                   ],
                 )),
           ),

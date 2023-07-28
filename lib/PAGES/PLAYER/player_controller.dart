@@ -1,7 +1,5 @@
-// ignore_for_file: unnecessary_overrides
+// ignore_for_file: unnecessary_overrides, unused_local_variable
 
-import 'dart:async';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:tikidown/CORE/core.dart';
@@ -33,7 +31,7 @@ class PlayerController extends GetxController {
                   barrierColor: thirdColor.withOpacity(.3),
                   // barrierDismissible: true,
                   Container(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       borderRadius: BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25)),
                       color: thirdColor,
                     ),

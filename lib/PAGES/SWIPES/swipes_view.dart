@@ -1,3 +1,6 @@
+// ignore_for_file: sized_box_for_whitespace
+
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:tikidown/CORE/core.dart';
@@ -25,7 +28,7 @@ class SwipeScreen extends GetView<SwipeController> {
             PageView(
               onPageChanged: (int page) {
                 controller.currentIndicator.value = page;
-                print(controller.currentIndicator.value);
+                log("${controller.currentIndicator.value}");
               },
               controller: controller.pageController,
               children: [
@@ -183,7 +186,7 @@ class SwipeScreen extends GetView<SwipeController> {
                                       ),
                                     ),
                                     InkWell(
-                                      onTap: () => null,
+                                      onTap: () {},
                                       child: SvgPicture.asset(
                                         settings_icon,
                                         width: 28,
@@ -256,135 +259,303 @@ class SwipeScreen extends GetView<SwipeController> {
                                                   const SliverGridDelegateWithFixedCrossAxisCount(
                                                       crossAxisCount: 2),
                                               shrinkWrap: true,
-                                              itemCount: controller
-                                                  .filesList.value.length,
+                                              itemCount:
+                                                  controller.filesList.length,
                                               itemBuilder:
                                                   (BuildContext context,
                                                       int index) {
-                                                return GestureDetector(
-                                                  onTap: () {
-                                                    controller.deselectAll(list: controller.filesList);
+                                                return controller.filesList[
+                                                            index]["type"] ==
+                                                        "mp4"
+                                                    ? GestureDetector(
+                                                        onTap: () {
+                                                          controller.deselectAll(
+                                                              list: controller
+                                                                  .filesList);
 
-                                                    controller.next(
-                                                        videoInfos: controller
-                                                            .filesList[index]);
-                                                  },
-                                                  onLongPress: () {
-                                                    if (controller.filesList[
-                                                                index]
-                                                            ["isSelected"] !=
-                                                        null) {
-                                                      controller
-                                                              .filesList[index]
-                                                                  ["isSelected"]
-                                                              .value =
-                                                          !controller
-                                                              .filesList[index]
-                                                                  ["isSelected"]
-                                                              .value;
+                                                          controller.next(
+                                                              videoInfos: controller
+                                                                      .filesList[
+                                                                  index]);
+                                                        },
+                                                        onLongPress: () {
+                                                          if (controller.filesList[
+                                                                      index][
+                                                                  "isSelected"] !=
+                                                              null) {
+                                                            controller
+                                                                    .filesList[
+                                                                        index][
+                                                                        "isSelected"]
+                                                                    .value =
+                                                                !controller
+                                                                    .filesList[
+                                                                        index][
+                                                                        "isSelected"]
+                                                                    .value;
+                                                          }
+                                                        },
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Obx(
+                                                              () => Container(
+                                                                margin: const EdgeInsets
+                                                                        .symmetric(
+                                                                    vertical: 4,
+                                                                    horizontal:
+                                                                        6),
+                                                                width:
+                                                                    Get.width,
+                                                                height: 130,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              12),
+                                                                  image:
+                                                                      DecorationImage(
+                                                                    image: FileImage(File(
+                                                                        controller.filesList[index]
+                                                                            [
+                                                                            "cover"])),
+                                                                    fit: BoxFit
+                                                                        .fitWidth,
+                                                                    filterQuality:
+                                                                        FilterQuality
+                                                                            .high,
+                                                                    colorFilter: controller.filesList[index]["isSelected"].value !=
+                                                                            null
+                                                                        ? controller.filesList[index]["isSelected"].value ==
+                                                                                true
+                                                                            ? const ColorFilter.mode(Colors.red,
+                                                                                BlendMode.color)
+                                                                            : const ColorFilter.mode(Colors.transparent, BlendMode.color)
+                                                                        : const ColorFilter.mode(Colors.transparent, BlendMode.color),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            Padding(
+                                                              padding: const EdgeInsets
+                                                                      .symmetric(
+                                                                  horizontal:
+                                                                      20),
+                                                              child:
+                                                                  SingleChildScrollView(
+                                                                scrollDirection:
+                                                                    Axis.horizontal,
+                                                                child: Text(controller
+                                                                            .filesList[
+                                                                        index]
+                                                                    ['title']),
+                                                              ),
+                                                            ),
+                                                            Padding(
+                                                              padding: const EdgeInsets
+                                                                      .symmetric(
+                                                                  horizontal:
+                                                                      20),
+                                                              child: Text(
+                                                                  "@${controller.filesList[index]["username"]}"),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      )
+                                                    : null;
+                                              }),
+                                        )
+                                      : pageIndex == 1
+                                          ? Center(
+                                              child: Text(
+                                              pageIndex.toString(),
+                                              style:
+                                                  const TextStyle(color: black),
+                                            ))
+                                          :
+                                          // Musique
+                                          Obx(
+                                              () => GridView.builder(
+                                                  gridDelegate:
+                                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                                          crossAxisCount: 2),
+                                                  shrinkWrap: true,
+                                                  itemCount: controller
+                                                      .filesList.length,
+                                                  itemBuilder:
+                                                      (BuildContext context,
+                                                          int index) {
+                                                    return GestureDetector(
+                                                      onTap: () {
+                                                        controller.deselectAll(
+                                                            list: controller
+                                                                .filesList);
 
-                                                      print(controller
-                                                          .filesList[index]
-                                                              ["isSelected"]
-                                                          .value);
-                                                    }
-                                                    ;
-                                                  },
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Obx(
-                                                        () => Container(
-                                                          margin:
-                                                              const EdgeInsets
+                                                        controller.play(
+                                                            videoInfos: controller
+                                                                    .filesList[
+                                                                index]);
+                                                      },
+                                                      onLongPress: () {
+                                                        if (controller.filesList[
+                                                                    index][
+                                                                "isSelected"] !=
+                                                            null) {
+                                                          controller
+                                                                  .filesList[
+                                                                      index][
+                                                                      "isSelected"]
+                                                                  .value =
+                                                              !controller
+                                                                  .filesList[
+                                                                      index][
+                                                                      "isSelected"]
+                                                                  .value;
+                                                        }
+                                                      },
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Obx(
+                                                            () => Container(
+                                                              margin: const EdgeInsets
                                                                       .symmetric(
                                                                   vertical: 4,
                                                                   horizontal:
                                                                       6),
-                                                          width: Get.width,
-                                                          height: 130,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        12),
-                                                            image:
-                                                                DecorationImage(
-                                                              image: FileImage(
-                                                                  File(controller
-                                                                              .filesList[
-                                                                          index]
-                                                                      [
-                                                                      "cover"])),
-                                                              fit: BoxFit
-                                                                  .fitWidth,
-                                                              filterQuality:
-                                                                  FilterQuality
-                                                                      .high,
-                                                              colorFilter: controller
-                                                                          .filesList[
-                                                                              index]
-                                                                              [
-                                                                              "isSelected"]
-                                                                          .value !=
-                                                                      null
-                                                                  ? controller.filesList[index]["isSelected"].value ==
-                                                                          true
-                                                                      ? const ColorFilter
-                                                                              .mode(
-                                                                          Colors
-                                                                              .red,
-                                                                          BlendMode
-                                                                              .color)
+                                                              width: Get.width,
+                                                              height: 130,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            12),
+                                                                image:
+                                                                    DecorationImage(
+                                                                  image: FileImage(File(
+                                                                      controller
+                                                                              .filesList[index]
+                                                                          [
+                                                                          "cover"])),
+                                                                  fit: BoxFit
+                                                                      .fitWidth,
+
+                                                                  filterQuality:
+                                                                      FilterQuality
+                                                                          .high,
+
+                                                                  colorFilter: controller
+                                                                              .filesList[index][
+                                                                                  "isSelected"]
+                                                                              .value !=
+                                                                          null
+                                                                      ? controller.filesList[index]["isSelected"].value ==
+                                                                              true
+                                                                          ? const ColorFilter.mode(
+                                                                              Colors
+                                                                                  .red,
+                                                                              BlendMode
+                                                                                  .color)
+                                                                          : ColorFilter.mode(
+                                                                              Colors.black.withOpacity(
+                                                                                  .9),
+                                                                              BlendMode
+                                                                                  .color)
                                                                       : const ColorFilter
                                                                               .mode(
-                                                                          Colors
-                                                                              .transparent,
+                                                                          firstColor,
                                                                           BlendMode
-                                                                              .color)
-                                                                  : const ColorFilter
-                                                                          .mode(
-                                                                      Colors
-                                                                          .transparent,
-                                                                      BlendMode
-                                                                          .color),
+                                                                              .color),
+                                                                  // invertColors: true
+                                                                ),
+                                                              ),
+
+                                                              // After
+
+                                                              child: Container(
+                                                                margin:
+                                                                    const EdgeInsets
+                                                                        .all(8),
+                                                                width:
+                                                                    Get.width,
+                                                                height: 130,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                  border: Border
+                                                                      .all(
+                                                                          width:
+                                                                              8,
+                                                                          color:
+                                                                              secondColor),
+                                                                  image:
+                                                                      DecorationImage(
+                                                                    image: FileImage(File(
+                                                                        controller.filesList[index]
+                                                                            [
+                                                                            "cover"])),
+                                                                    fit: BoxFit
+                                                                        .fitWidth,
+                                                                    filterQuality:
+                                                                        FilterQuality
+                                                                            .high,
+                                                                    colorFilter: controller.filesList[index]["isSelected"].value !=
+                                                                            null
+                                                                        ? controller.filesList[index]["isSelected"].value ==
+                                                                                true
+                                                                            ? const ColorFilter.mode(Colors.red,
+                                                                                BlendMode.color)
+                                                                            : const ColorFilter.mode(Colors.transparent, BlendMode.color)
+                                                                        : const ColorFilter.mode(Colors.transparent, BlendMode.color),
+                                                                  ),
+                                                                ),
+                                                                child: Center(
+                                                                    child: SvgPicture
+                                                                        .asset(
+                                                                  music_icon,
+                                                                  height: 60,
+                                                                )),
+                                                              ),
                                                             ),
                                                           ),
-                                                        ),
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .symmetric(
+                                                                    horizontal:
+                                                                        20),
+                                                            child:
+                                                                SingleChildScrollView(
+                                                              scrollDirection:
+                                                                  Axis.horizontal,
+                                                              child: Text(
+                                                                  controller.filesList[
+                                                                          index]
+                                                                      [
+                                                                      'title']),
+                                                            ),
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .symmetric(
+                                                                    horizontal:
+                                                                        20),
+                                                            child: Text(
+                                                                "@${controller.filesList[index]["username"]}"),
+                                                          ),
+                                                        ],
                                                       ),
-                                                      Padding(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                horizontal: 20),
-                                                        child:
-                                                            SingleChildScrollView(
-                                                          scrollDirection:
-                                                              Axis.horizontal,
-                                                          child: Text(controller
-                                                                  .filesList[
-                                                              index]['title']),
-                                                        ),
-                                                      ),
-                                                      Padding(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                horizontal: 20),
-                                                        child: Text(
-                                                            "@${controller.filesList[index]["username"]}"),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
-                                              }),
-                                        )
-                                      : Center(
-                                          child: Text(
-                                          pageIndex.toString(),
-                                          style: TextStyle(color: black),
-                                        ));
+                                                    );
+                                                  }),
+                                            );
                                 }),
                           ),
                         ),
@@ -403,25 +574,24 @@ class SwipeScreen extends GetView<SwipeController> {
                   borderRadius: BorderRadius.circular(25),
                   color: white,
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    TextButton(
-                      onPressed: () => controller.home(),
-                      child: Container(
-                          child: SvgPicture.asset(
-                        home_icon,
-                        width: 35,
-                        colorFilter: ColorFilter.mode(
-                            controller.currentIndicator.value == 0
-                                ? secondColor
-                                : fourthColor,
-                            BlendMode.srcIn),
-                      )),
-                    ),
-                    TextButton(
-                      onPressed: () => controller.downloads(),
-                      child: Container(
+                child: Obx(
+                  ()=> Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      TextButton(
+                        onPressed: () => controller.home(),
+                        child: SvgPicture.asset(
+                          home_icon,
+                          width: 35,
+                          colorFilter: ColorFilter.mode(
+                              controller.currentIndicator.value == 0
+                                  ? secondColor
+                                  : fourthColor,
+                              BlendMode.srcIn),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () => controller.downloads(),
                         child: SvgPicture.asset(
                           download_icon,
                           width: 35,
@@ -432,8 +602,8 @@ class SwipeScreen extends GetView<SwipeController> {
                               BlendMode.srcIn),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
