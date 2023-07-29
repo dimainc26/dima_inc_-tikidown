@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_overrides, unused_local_variable, depend_on_referenced_packages
+// ignore_for_file: unnecessary_overrides
 
 import 'dart:async';
 import 'dart:developer';
@@ -13,33 +13,10 @@ import 'package:tikidown/CORE/core.dart';
 import 'package:tikidown/MODELS/videos_model.dart';
 
 import 'package:http/http.dart' as http;
-
-import 'package:receive_intent/receive_intent.dart';
+import 'dart:math' as math;
 
 class SwipeController extends GetxController
     with GetSingleTickerProviderStateMixin {
-  // Intent ENTRY
-
-  Intent? _initialIntent;
-
-  Future<void> _init() async {
-    final receivedIntent = await ReceiveIntent.getInitialIntent();
-
-    _initialIntent = receivedIntent;
-
-    if (_initialIntent?.categories != null) {
-    } else {
-      if (_initialIntent?.extra?['android.intent.extra.TEXT'] != null &&
-          _initialIntent?.extra?['android.intent.extra.TEXT'] != "") {
-        // getVideoDatas(_initialIntent?.extra?['android.intent.extra.TEXT']);
-
-        fetchDatas(_initialIntent?.extra?['android.intent.extra.TEXT']);
-        _initialIntent?.extra?['android.intent.extra.TEXT'] = null;
-        _initialIntent = null;
-      }
-    }
-  }
-
   Duration duration = const Duration(milliseconds: 500);
 
   late PageController pageController;
@@ -58,15 +35,9 @@ class SwipeController extends GetxController
 
   RxInt currentIndicator = 0.obs;
 
-  datas() {
-    box.write("account", "me").then((value) => box.save());
-  }
-
   @override
   void onInit() {
     super.onInit();
-    _init();
-    datas();
     pageController = PageController(initialPage: 0);
     currentIndicator = pageController.initialPage.obs;
 
@@ -86,7 +57,6 @@ class SwipeController extends GetxController
     linkController.dispose();
     tabBarController.dispose();
     pageController.dispose();
-    _initialIntent = null;
   }
 
 // Home screen Controllers
@@ -115,10 +85,10 @@ class SwipeController extends GetxController
       // print(videoData?.cover);
       // print(videoData?.origin_cover);
 
-      // log(videoData?.video);
+      log(videoData?.video);
       // print(videoData?.wm_video);
 
-      // log("musique : ${videoData?.music}");
+      log("musique : ${videoData?.music}");
       // print(videoData?.music_cover);
       // print(videoData?.music_title);
 
@@ -145,7 +115,7 @@ class SwipeController extends GetxController
               height: Get.height / 2 + 40,
               width: Get.width,
               decoration: const BoxDecoration(
-                color: white,
+                color: Color(0xff7577CC),
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(12),
                   topRight: Radius.circular(12),
@@ -174,7 +144,7 @@ class SwipeController extends GetxController
                           right: 20,
                           child: Container(
                               width: 180,
-                              color: secondColor.withOpacity(.4),
+                              color: Colors.red.withOpacity(.4),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
@@ -241,10 +211,6 @@ class SwipeController extends GetxController
                                   fit: BoxFit.cover,
                                 ),
                               ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: SvgPicture.asset(music_icon, width: 40,),
-                              ),
                             ),
                           ),
                         ),
@@ -287,7 +253,7 @@ class SwipeController extends GetxController
     time = time[0].split(":");
 
     var actualTime = date[0] + date[1] + date[2] + time[0] + time[1] + time[2];
-    // log(actualTime);
+    print(actualTime);
 
     return actualTime;
   }
@@ -327,7 +293,7 @@ class SwipeController extends GetxController
     // Sauver dans db
     Map<String, dynamic> fileModel = ({
       "id": UniqueKey().toString(),
-      "title": mode == "music" ? videoData?.music_title : videoData?.title,
+      "title": videoData?.title,
       "name": videoData?.username,
       "username": videoData?.name,
       "type": mode == "natural" || mode == "watermark"
@@ -344,7 +310,7 @@ class SwipeController extends GetxController
 
     for (Map<String, dynamic> l in downList) {
       l.remove("isSelected");
-      // l.remove("path");
+      l.remove("path");
     }
 
     downList.add(fileModel);
@@ -384,7 +350,7 @@ class SwipeController extends GetxController
     late List<dynamic> datas;
     if (box.hasData("files")) {
       datas = jsonDecode(box.read("files"));
-      log(">>> datas in storage = ${datas.length}");
+      log("${datas.length}");
       // log("${datas}");
     } else {
       datas = [];
@@ -414,32 +380,33 @@ class SwipeController extends GetxController
   restoreDataToFilter() {
     List<dynamic> myList = jsonDecode(box.read("noFilteredList"));
 
-    for (var element in myList) {
+    myList.forEach((element) {
       element.addAll({
         "isSelected": false.obs,
       });
-    }
+    });
     return myList;
   }
 
   changePage(pageSelected) {
     if (pageSelected == 0) {
+
       filesList.value = restoreDataToFilter();
       filesList.value =
           filesList.where((type) => type["type"] == "mp4").toList();
-      // log("actual List = ${filesList.length}");
+      log("actual List = " + filesList.value.length.toString());
     } else if (pageSelected == 1) {
       filesList.value = restoreDataToFilter();
 
       filesList.value =
           filesList.where((type) => type["type"] == "jpg").toList();
-      // log("actual List = ${filesList.length}");
+      log("actual List = " + filesList.value.length.toString());
     } else if (pageSelected == 2) {
       filesList.value = restoreDataToFilter();
 
       filesList.value =
           filesList.where((type) => type["type"] == "mp3").toList();
-      // log("actual List = ${filesList.length}");
+      log("actual List = " + filesList.value.length.toString());
     }
 
     downPageController.animateToPage(pageSelected,
@@ -450,17 +417,13 @@ class SwipeController extends GetxController
     Get.toNamed("/player", arguments: videoInfos);
   }
 
-  play({required videoInfos}) {
-    Get.toNamed("/music", arguments: videoInfos);
-  }
-
   listFiles() async {
     await readStorage();
 
     List paths = [path, musicPath];
 
     for (var myPath in paths) {
-      // log("--- $myPath");
+      log("[[[[[[[  $myPath  ]]]]]]]");
       Directory directory = Directory(myPath);
       late List<FileSystemEntity> files;
 
@@ -479,7 +442,7 @@ class SwipeController extends GetxController
           String name = nameWithType.split(".").first;
           String type = nameWithType.split(".").last;
 
-          for (var downloadFile in downList) {
+          downList.forEach((downloadFile) {
             if (downloadFile["date"] == name) {
               Map<String, dynamic> x = downloadFile;
 
@@ -490,17 +453,17 @@ class SwipeController extends GetxController
 
               // Videos - Musics -Covers
               // if (type == "mp4") {
-              filesList.add(x);
+              filesList.value.add(x);
               // }
             }
-          }
+          });
 
-          // log(" $name ------ $type ");
+          log(" ${name} ------ ${type} ");
         }
       }
     }
 
-    totalItems.value = filesList.length;
+    totalItems.value = filesList.value.length;
 
     for (Map<String, dynamic> l in filesList) {
       l.remove("isSelected");
@@ -512,7 +475,7 @@ class SwipeController extends GetxController
       l.addAll({"isSelected": false.obs});
     }
 
-    log(">>> totalFiles ${filesList.length}");
+    log("${filesList.value.length}");
   }
 
   var toRemove = [];
@@ -541,15 +504,15 @@ class SwipeController extends GetxController
               children: [
                 LargeButton(
                   onTap: () {
-                    for (var element in filesList) {
+                    filesList.forEach((element) {
                       if (element["isSelected"].value == true) {
                         // log(element.toString());
                         File delFile = File(element["path"]);
-                        // log(delFile.path);
+                        log(delFile.path);
                         delFile.deleteSync();
                         toRemove.add(element);
                       }
-                    }
+                    });
 
                     filesList
                         .removeWhere((element) => toRemove.contains(element));
@@ -585,7 +548,7 @@ class SwipeController extends GetxController
 
   deselectAll({required RxList list}) {
     for (var deselect in list) {
-      // log("$deselect");
+      log("${deselect}");
 
       if (deselect["isSelected"].value == true) {
         deselect["isSelected"].value = false;
@@ -599,7 +562,7 @@ class SwipeController extends GetxController
 
     for (var shareElement in filesToShare) {
       for (var share in shareElement) {
-        // log("$share");
+        log("${share}");
 
         if (share["isSelected"] == true.obs) {
           shares.add(XFile(share["path"]));

@@ -1,5 +1,3 @@
-// ignore_for_file: unused_local_variable, prefer_typing_uninitialized_variables
-
 import 'dart:developer';
 import 'dart:io';
 import 'package:permission_handler/permission_handler.dart';
@@ -104,7 +102,7 @@ class DirectoryClient {
       log("----- $e");
     }
 
-    // log("PATH: ${directory?.path}");
+    log("PATH: ${directory?.path}");
 
     late var saveFile;
 
@@ -115,11 +113,11 @@ class DirectoryClient {
 
     RxBool status = false.obs;
     if (await directory.exists()) {
-      saveFile = File("${directory.path}/$fileName.$type");
+      saveFile = File("${directory.path}/${fileName}.${type}");
 
       saveFile = saveFile.path;
 
-      // log("saveFile:  $saveFile");
+      log("saveFile:  $saveFile");
 
       // All good now launch download here
 

@@ -5,6 +5,6 @@ class TestScreen extends GetView<TestController> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Text(""));
+    return Scaffold(body: Text(""));
   }
 }

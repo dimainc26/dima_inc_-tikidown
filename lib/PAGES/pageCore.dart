@@ -23,12 +23,9 @@ export 'SWIPES/swipes_view.dart';
 export 'SWIPES/swipes_binding.dart';
 export 'SWIPES/swipes_controller.dart';
 
+// Downloads
+
 // Player
 export 'PLAYER/player_view.dart';
 export 'PLAYER/player_binding.dart';
 export 'PLAYER/player_controller.dart';
-
-// Music
-export 'MUSIC/music_view.dart';
-export 'MUSIC/music_binding.dart';
-export 'MUSIC/music_controller.dart';

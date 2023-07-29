@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 
 class OnBoardController extends GetxController {
 
-  Duration duration = const Duration(milliseconds: 500);
+  Duration duration = Duration(milliseconds: 500);
   
   final pageController = PageController;
 

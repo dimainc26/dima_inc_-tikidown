@@ -1,5 +1,6 @@
 // ignore_for_file: unnecessary_overrides, unused_local_variable
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:tikidown/CORE/core.dart';
@@ -17,45 +18,12 @@ class PlayerController extends GetxController {
   RxBool pausedContent = false.obs;
 
   initialize() async {
-    RxBool seeInfos = false.obs;
-    if (datas["path"] != null) {
-      videoPlayerController = VideoPlayerController.file(File(datas["path"]))
-        ..initialize().then((_) async {
-          videoPlayerController.play();
-          videoPlayerController.addListener(() {
-            if (videoPlayerController.value.position ==
-                videoPlayerController.value.duration) {
-              Get.back();
-
-              Get.bottomSheet(
-                  barrierColor: thirdColor.withOpacity(.3),
-                  // barrierDismissible: true,
-                  Container(
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25)),
-                      color: thirdColor,
-                    ),
-                    width: Get.width - 80,
-                    height: 80,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: 70,
-                          height: 70,
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
-                                  image: NetworkImage(datas["avatar"]))),
-                        ), 
-                        Text("@${datas["username"]}", style: largeText,),
-                      ],
-                    ),
-                  ));
-            }
-          });
-        });
-    }
+   if(datas["path"] != null) {
+     videoPlayerController = VideoPlayerController.file(File(datas["path"]))
+      ..initialize().then((_) async {
+        videoPlayerController.play();
+      });
+   }
   }
 
   @override
