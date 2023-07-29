@@ -109,7 +109,7 @@ class RechargeFormField extends StatelessWidget {
   final IconData icon;
   final TextEditingController xcontroller;
   final List<TextInputFormatter> inputFormatters;
- 
+
   @override
   Widget build(BuildContext context) {
     return Padding(

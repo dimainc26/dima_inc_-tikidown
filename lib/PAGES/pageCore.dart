@@ -23,8 +23,6 @@ export 'SWIPES/swipes_view.dart';
 export 'SWIPES/swipes_binding.dart';
 export 'SWIPES/swipes_controller.dart';
 
-// Downloads
-
 // Player
 export 'PLAYER/player_view.dart';
 export 'PLAYER/player_binding.dart';

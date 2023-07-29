@@ -1,7 +1,5 @@
 // TEXTS
 
-// ignore_for_file: constant_identifier_names
-
 const String appName = "Just Express";
 const String appSlogan = "SLogan ici";
 

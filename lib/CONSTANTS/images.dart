@@ -17,9 +17,7 @@ const String download_icon = "${img}download.svg";
 const String search_icon = "${img}search.svg";
 const String play_icon = "${img}play.svg";
 const String pause_icon = "${img}pause.svg";
-const String play_icon = "${img}play.svg";
 const String music_icon = "${img}music.svg";
-const String pause_icon = "${img}pause.svg";
 const String left_icon = "${img}arrow-left.svg";
 const String right_icon = "${img}arrow-right.svg";
 

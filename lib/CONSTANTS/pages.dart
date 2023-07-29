@@ -10,7 +10,7 @@ class AppPages {
   static const working = Routes.working;
 
   static final androidRoutes = [
-    // Current working page
+    // TODO: Current working page
     GetPage(
         name: '/working',
         page: () => const SwipeScreen(),
@@ -40,9 +40,5 @@ class AppPages {
         name: '/player',
         page: () => const PlayerScreen(),
         binding: PlayerBinding()),
-    // GetPage(
-    //     name: '/music',
-    //     page: () => const MusicScreen(),
-    //     binding: MusicBinding()),
   ];
 }
